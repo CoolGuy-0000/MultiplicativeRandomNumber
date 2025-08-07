@@ -8,9 +8,9 @@ uint64_t g_mStartNum = 1234;
 uint64_t g_mLimit = 0;
 uint64_t g_Divisor = 81;
 COLORREF* g_colors = NULL;
-uint32_t g_randomSeed = 0; // ·£´ı ½Ãµå Ãß°¡
+uint32_t g_randomSeed = 0; // ëœë¤ ì‹œë“œ ì¶”ê°€
 
-// À©µµ¿ì ÄÁÆ®·Ñ ID
+// ìœˆë„ìš° ì»¨íŠ¸ë¡¤ ID
 #define IDC_EDIT_MBASE 100
 #define IDC_EDIT_MM 101
 #define IDC_EDIT_STARTNUM 102
@@ -27,7 +27,7 @@ uint32_t g_randomSeed = 0; // ·£´ı ½Ãµå Ãß°¡
 #define IDC_BUTTON_APPLY_COLOR 114
 #define IDC_BUTTON_SAVE 115
 
-// À©µµ¿ì Å¬·¡½º ÀÌ¸§
+// ìœˆë„ìš° í´ë˜ìŠ¤ ì´ë¦„
 const TCHAR g_szClassName[] = TEXT("MyWindowClass");
 
 HBITMAP g_hBitmap = NULL;
@@ -35,7 +35,7 @@ COLORREF* g_pixelData = NULL;
 BOOL g_bDataReady = FALSE;
 int64_t g_bitmapWidth = 320;
 int64_t g_bitmapHeight = 320;
-int g_selectedColorIndex = -1; // ÇöÀç ¼±ÅÃµÈ »ö»óÀÇ ÀÎµ¦½º
+int g_selectedColorIndex = -1; // í˜„ì¬ ì„ íƒëœ ìƒ‰ìƒì˜ ì¸ë±ìŠ¤
 
 HINSTANCE g_hMyInstance;
 
@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     hwnd = CreateWindowEx(
         WS_EX_CLIENTEDGE,
         g_szClassName,
-        TEXT("°ö¼À ÁÖ±â¼º ¿¬±¸"),
+        TEXT("ê³±ì…ˆ ì£¼ê¸°ì„± ì—°êµ¬"),
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
         NULL, NULL, hInstance, NULL
@@ -99,7 +99,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     switch (msg) {
     case WM_CREATE: {
-        // HBITMAP ¹× ÇÈ¼¿ ¸Ş¸ğ¸® »ı¼º
+        // HBITMAP ë° í”½ì…€ ë©”ëª¨ë¦¬ ìƒì„±
         CreateBitmapAndMemory();
 
         CreateWindow(TEXT("STATIC"), TEXT("M_BASE:"), WS_VISIBLE | WS_CHILD, 10, 10, 60, 20, hwnd, NULL, NULL, NULL);
@@ -120,15 +120,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         CreateWindow(TEXT("STATIC"), TEXT("Divisor:"), WS_VISIBLE | WS_CHILD, 190, 70, 70, 20, hwnd, NULL, NULL, NULL);
         CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("EDIT"), TEXT("81"), WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 270, 70, 100, 20, hwnd, (HMENU)IDC_EDIT_DIVISOR, g_hMyInstance, NULL);
 
-        // "random color seed" editbox Ãß°¡
+        // "random color seed" editbox ì¶”ê°€
         CreateWindow(TEXT("STATIC"), TEXT("Seed:"), WS_VISIBLE | WS_CHILD, 350, 120, 80, 20, hwnd, NULL, NULL, NULL);
         CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("EDIT"), TEXT("0"), WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 420, 120, 80, 20, hwnd, (HMENU)IDC_EDIT_RANDOM_SEED, g_hMyInstance, NULL);
 
-        // "change color" button Ãß°¡
+        // "change color" button ì¶”ê°€
         CreateWindowEx(0, TEXT("BUTTON"), TEXT("Change Colors"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 350, 150, 100, 30, hwnd, (HMENU)IDC_BUTTON_CHANGE_COLOR, g_hMyInstance, NULL);
 
-        // ¹öÆ°
-        CreateWindowEx(0, TEXT("BUTTON"), TEXT("°è»ê ¹× ±×¸®±â"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 20, 70, 150, 30, hwnd, (HMENU)IDC_BUTTON_CALCULATE, g_hMyInstance, NULL);
+        // ë²„íŠ¼
+        CreateWindowEx(0, TEXT("BUTTON"), TEXT("ê³„ì‚° ë° ê·¸ë¦¬ê¸°"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 20, 70, 150, 30, hwnd, (HMENU)IDC_BUTTON_CALCULATE, g_hMyInstance, NULL);
 
         CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("LISTBOX"), NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_NOTIFY, g_bitmapWidth + 200, 10, 200, g_bitmapHeight + 50, hwnd, (HMENU)IDC_LISTBOX_COLORS, g_hMyInstance, NULL);
 
@@ -141,10 +141,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         CreateWindow(TEXT("STATIC"), TEXT("Blue:"), WS_VISIBLE | WS_CHILD, g_bitmapWidth + 200, g_bitmapHeight + 130, 30, 20, hwnd, NULL, NULL, NULL);
         hEditBlue = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("EDIT"), TEXT("0"), WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, g_bitmapWidth + 240, g_bitmapHeight + 130, 50, 20, hwnd, (HMENU)IDC_EDIT_BLUE, g_hMyInstance, NULL);
 
-        // "»ö»ó Àû¿ë" ¹öÆ° Ãß°¡
-        CreateWindowEx(0, TEXT("BUTTON"), TEXT("»ö»ó Àû¿ë"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, g_bitmapWidth + 200, g_bitmapHeight + 160, 100, 30, hwnd, (HMENU)IDC_BUTTON_APPLY_COLOR, g_hMyInstance, NULL);
+        // "ìƒ‰ìƒ ì ìš©" ë²„íŠ¼ ì¶”ê°€
+        CreateWindowEx(0, TEXT("BUTTON"), TEXT("ìƒ‰ìƒ ì ìš©"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, g_bitmapWidth + 200, g_bitmapHeight + 160, 100, 30, hwnd, (HMENU)IDC_BUTTON_APPLY_COLOR, g_hMyInstance, NULL);
 
-        CreateWindowEx(0, TEXT("BUTTON"), TEXT("ÀúÀå"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, g_bitmapWidth + 200, g_bitmapHeight + 200, 150, 30, hwnd, (HMENU)IDC_BUTTON_SAVE, g_hMyInstance, NULL);
+        CreateWindowEx(0, TEXT("BUTTON"), TEXT("ì €ì¥"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, g_bitmapWidth + 200, g_bitmapHeight + 200, 150, 30, hwnd, (HMENU)IDC_BUTTON_SAVE, g_hMyInstance, NULL);
 
         UpdateMBase(g_mBase);
 
@@ -152,7 +152,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
 
     case WM_COMMAND: {
-        // ¹öÆ° Å¬¸¯ Ã³¸®
+        // ë²„íŠ¼ í´ë¦­ ì²˜ë¦¬
         if (LOWORD(wParam) == IDC_BUTTON_APPLY_MBASE) {
             TCHAR buffer[256];
             GetWindowText(GetDlgItem(hwnd, IDC_EDIT_MBASE), buffer, sizeof(buffer));
@@ -201,21 +201,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         else if (LOWORD(wParam) == IDC_BUTTON_CHANGE_COLOR) {
             ChangeColors(hwnd);
-            InvalidateRect(hwnd, NULL, FALSE); // À©µµ¿ì ´Ù½Ã ±×¸®±â
+            InvalidateRect(hwnd, NULL, FALSE); // ìœˆë„ìš° ë‹¤ì‹œ ê·¸ë¦¬ê¸°
         }
         else if (LOWORD(wParam) == IDC_BUTTON_APPLY_COLOR) {
             ApplyColorChanges(hwnd);
-            UpdateColorListBox(hwnd); // »ö»ó ¸ñ·Ï °»½Å
-            InvalidateRect(hwnd, NULL, FALSE); // À©µµ¿ì ´Ù½Ã ±×¸®±â
+            UpdateColorListBox(hwnd); // ìƒ‰ìƒ ëª©ë¡ ê°±ì‹ 
+            InvalidateRect(hwnd, NULL, FALSE); // ìœˆë„ìš° ë‹¤ì‹œ ê·¸ë¦¬ê¸°
         }
-        // ListBox ¼±ÅÃ ÀÌº¥Æ® Ã³¸®
+        // ListBox ì„ íƒ ì´ë²¤íŠ¸ ì²˜ë¦¬
         else if (HIWORD(wParam) == LBN_SELCHANGE && LOWORD(wParam) == IDC_LISTBOX_COLORS) {
             int selectedIndex = SendMessage((HWND)lParam, LB_GETCURSEL, 0, 0);
             if (selectedIndex != LB_ERR) {
                 g_selectedColorIndex = selectedIndex;
                 COLORREF color = g_colors[selectedIndex];
 
-                // Edit ÄÁÆ®·Ñ¿¡ »ö»ó °ª Ç¥½Ã
+                // Edit ì»¨íŠ¸ë¡¤ì— ìƒ‰ìƒ ê°’ í‘œì‹œ
                 TCHAR buffer[256];
                 _stprintf_s(buffer, 256, TEXT("%d"), GetRValue(color));
                 SetWindowText(GetDlgItem(hwnd, IDC_EDIT_RED), buffer);
@@ -240,10 +240,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
 
             if (GetSaveFileName(&ofn)) {
-                // ÆÄÀÏ È®ÀåÀÚ¿¡ µû¶ó ÀúÀå ÇÔ¼ö È£Ãâ
+                // íŒŒì¼ í™•ì¥ìì— ë”°ë¼ ì €ì¥ í•¨ìˆ˜ í˜¸ì¶œ
                 if (_tcsstr(filename, TEXT(".bmp"))) {
                     if (!SaveBitmapToFile(hwnd, filename)) {
-                        MessageBox(hwnd, TEXT("BMP ÆÄÀÏ ÀúÀå ½ÇÆĞ!"), TEXT("¿À·ù"), MB_OK | MB_ICONERROR);
+                        MessageBox(hwnd, TEXT("BMP íŒŒì¼ ì €ì¥ ì‹¤íŒ¨!"), TEXT("ì˜¤ë¥˜"), MB_OK | MB_ICONERROR);
                     }
                 }
             }
@@ -299,17 +299,17 @@ bool SaveBitmapToFile(HWND hwnd, LPCTSTR filename) {
         return false;
     }
 
-    // BITMAPINFO ¼³Á¤
+    // BITMAPINFO ì„¤ì •
     memset(&bmi, 0, sizeof(BITMAPINFO));
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmi.bmiHeader.biWidth = g_bitmapWidth;
-    bmi.bmiHeader.biHeight = -g_bitmapHeight; // »óÇÏ ¹İÀü
+    bmi.bmiHeader.biHeight = -g_bitmapHeight; // ìƒí•˜ ë°˜ì „
     bmi.bmiHeader.biPlanes = 1;
     bmi.bmiHeader.biBitCount = 32;
     bmi.bmiHeader.biCompression = BI_RGB;
     bmi.bmiHeader.biSizeImage = g_bitmapWidth * g_bitmapHeight * 4;
 
-    // DIB Section »ı¼º
+    // DIB Section ìƒì„±
     hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, (void**)&pPixelData, NULL, 0);
     if (!hBitmap) {
         DeleteDC(hdcMem);
@@ -319,8 +319,8 @@ bool SaveBitmapToFile(HWND hwnd, LPCTSTR filename) {
 
     HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hBitmap);
 
-    // ¸Ş¸ğ¸® DC¿¡ ºñÆ®¸Ê º¹»ç
-    if (!BitBlt(hdcMem, 0, 0, g_bitmapWidth, g_bitmapHeight, GetDC(hwnd), 20, 120, SRCCOPY)) { // Y ÁÂÇ¥ º¯°æ
+    // ë©”ëª¨ë¦¬ DCì— ë¹„íŠ¸ë§µ ë³µì‚¬
+    if (!BitBlt(hdcMem, 0, 0, g_bitmapWidth, g_bitmapHeight, GetDC(hwnd), 20, 120, SRCCOPY)) { // Y ì¢Œí‘œ ë³€ê²½
         SelectObject(hdcMem, hbmOld);
         DeleteObject(hBitmap);
         DeleteDC(hdcMem);
@@ -330,14 +330,14 @@ bool SaveBitmapToFile(HWND hwnd, LPCTSTR filename) {
 
     SelectObject(hdcMem, hbmOld);
 
-    // BMP ÆÄÀÏ Çì´õ »ı¼º
+    // BMP íŒŒì¼ í—¤ë” ìƒì„±
     BITMAPFILEHEADER bmfHeader;
     memset(&bmfHeader, 0, sizeof(BITMAPFILEHEADER));
     bmfHeader.bfType = 0x4D42; // "BM"
     bmfHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
     bmfHeader.bfSize = bmfHeader.bfOffBits + bmi.bmiHeader.biSizeImage;
 
-    // ÆÄÀÏ ¾²±â
+    // íŒŒì¼ ì“°ê¸°
     HANDLE hFile = CreateFile(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) {
         DeleteObject(hBitmap);
@@ -356,7 +356,7 @@ bool SaveBitmapToFile(HWND hwnd, LPCTSTR filename) {
         }
     }
 
-    // Á¤¸®
+    // ì •ë¦¬
     CloseHandle(hFile);
     DeleteObject(hBitmap);
     DeleteDC(hdcMem);
@@ -370,9 +370,9 @@ void ChangeColors(HWND hwnd) {
     GetWindowText(GetDlgItem(hwnd, IDC_EDIT_RANDOM_SEED), buffer, sizeof(buffer));
     g_randomSeed = _ttoi(buffer);
 
-    srand(g_randomSeed); // ·£´ı ½Ãµå ¼³Á¤
+    srand(g_randomSeed); // ëœë¤ ì‹œë“œ ì„¤ì •
     GenerateUniqueRandomColors(g_mBase);
-    UpdateColorListBox(hwnd); // »ö»ó ¸ñ·Ï °»½Å
+    UpdateColorListBox(hwnd); // ìƒ‰ìƒ ëª©ë¡ ê°±ì‹ 
 }
 
 void UpdateMBase(uint64_t new_mBase) {
@@ -419,7 +419,7 @@ void GenerateUniqueRandomColors(uint64_t count) {
         return;
     }
 
-    const uint64_t MIN_DIST_SQUARED = 3000; // »ö»ó °£ÀÇ ÃÖ¼Ò À¯Å¬¸®µå °Å¸® (Á¦°ö)
+    const uint64_t MIN_DIST_SQUARED = 3000; // ìƒ‰ìƒ ê°„ì˜ ìµœì†Œ ìœ í´ë¦¬ë“œ ê±°ë¦¬ (ì œê³±)
 
     for (int i = 0; i < count; i++) {
         COLORREF newColor;
@@ -427,10 +427,10 @@ void GenerateUniqueRandomColors(uint64_t count) {
 
         do {
             isUnique = TRUE;
-            // ·£´ı RGB °ª »ı¼º
+            // ëœë¤ RGB ê°’ ìƒì„±
             newColor = RGB(rand() % 256, rand() % 256, rand() % 256);
 
-            // ±âÁ¸ »ö»óµé°úÀÇ À¯»ç¼º Ã¼Å©
+            // ê¸°ì¡´ ìƒ‰ìƒë“¤ê³¼ì˜ ìœ ì‚¬ì„± ì²´í¬
             for (int j = 0; j < i; j++) {
                 int r_dist = GetRValue(newColor) - GetRValue(g_colors[j]);
                 int g_dist = GetGValue(newColor) - GetGValue(g_colors[j]);
@@ -459,7 +459,7 @@ void ApplyColorChanges(HWND hwnd) {
         GetWindowText(GetDlgItem(hwnd, IDC_EDIT_BLUE), buffer, sizeof(buffer));
         blue = _ttoi(buffer);
 
-        // À¯È¿¼º °Ë»ç
+        // ìœ íš¨ì„± ê²€ì‚¬
         if (red >= 0 && red <= 255 && green >= 0 && green <= 255 && blue >= 0 && blue <= 255) {
             g_colors[g_selectedColorIndex] = RGB(red, green, blue);
         }
@@ -471,7 +471,7 @@ void ApplyColorChanges(HWND hwnd) {
 
 void UpdateColorListBox(HWND hwnd) {
     HWND hListBox = GetDlgItem(hwnd, IDC_LISTBOX_COLORS);
-    SendMessage(hListBox, LB_RESETCONTENT, 0, 0); // ±âÁ¸ Ç×¸ñ Á¦°Å
+    SendMessage(hListBox, LB_RESETCONTENT, 0, 0); // ê¸°ì¡´ í•­ëª© ì œê±°
 
     TCHAR buffer[256];
     for (int i = 0; i < g_mBase; ++i) {
